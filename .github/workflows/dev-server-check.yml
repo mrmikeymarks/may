@@ -17,6 +17,8 @@ on:
 jobs:
   server-smoke:
     runs-on: [self-hosted, ubuntu-latest]
+    permissions:
+      contents: read
     env:
       ADMIN_PASSWORD: ci-smoke-password-1
     steps:
