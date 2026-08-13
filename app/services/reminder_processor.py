@@ -2,10 +2,21 @@
 import logging
 from datetime import date, datetime, timedelta
 from app import db
-from app.models import CalendarAlarm, CalendarEvent, Reminder, User
+from app.models import CalendarAlarm, CalendarEvent, PersonTask, Reminder, User
 from app.services.notifications import NotificationService
 
 logger = logging.getLogger(__name__)
+
+
+def _time_message(days_until):
+    """Human phrasing for how far away a due date is."""
+    if days_until < 0:
+        return f"{abs(days_until)} days overdue"
+    if days_until == 0:
+        return "due today"
+    if days_until == 1:
+        return "due tomorrow"
+    return f"due in {days_until} days"
 
 
 def process_due_reminders():
@@ -55,22 +66,23 @@ def process_due_reminders():
             stats['skipped'] += 1
             continue
 
-        # Build notification message
-        vehicle_name = reminder.vehicle.name if reminder.vehicle else 'Unknown Vehicle'
-        days_until = (reminder.due_date - today).days
-
-        if days_until < 0:
-            time_msg = f"{abs(days_until)} days overdue"
-        elif days_until == 0:
-            time_msg = "due today"
-        elif days_until == 1:
-            time_msg = "due tomorrow"
+        # Build notification message — a reminder is about a vehicle or a person
+        if reminder.person:
+            subject_label = 'Person'
+            subject_name = reminder.person.display_name
+        elif reminder.vehicle:
+            subject_label = 'Vehicle'
+            subject_name = reminder.vehicle.name
         else:
-            time_msg = f"due in {days_until} days"
+            subject_label = 'Vehicle'
+            subject_name = 'Unknown Vehicle'
+
+        days_until = (reminder.due_date - today).days
+        time_msg = _time_message(days_until)
 
         title = f"Reminder: {reminder.title} ({time_msg})"
         message = (
-            f"Vehicle: {vehicle_name}\n"
+            f"{subject_label}: {subject_name}\n"
             f"Reminder: {reminder.title}\n"
             f"Due: {reminder.due_date.strftime('%B %d, %Y')} ({time_msg})\n"
         )
@@ -96,6 +108,73 @@ def process_due_reminders():
             stats['failed'] += 1
             stats['errors'].append(f"Reminder #{reminder.id}: {str(e)}")
             logger.error(f"Error processing reminder #{reminder.id}: {e}")
+
+    return stats
+
+
+def process_due_person_tasks():
+    """Send notifications for person tasks whose due date is approaching.
+
+    Mirrors process_due_reminders: one notification per task per due date,
+    using the user's reminder lead time and preferred notification method.
+    """
+    stats = {'checked': 0, 'sent': 0, 'failed': 0, 'skipped': 0, 'errors': []}
+
+    tasks = PersonTask.query.filter(
+        PersonTask.status != 'done',
+        PersonTask.notification_sent == False,  # noqa: E712 — SQLAlchemy comparison
+        PersonTask.due_date.isnot(None),
+    ).all()
+
+    today = date.today()
+
+    for task in tasks:
+        stats['checked'] += 1
+
+        user = User.query.get(task.user_id)
+        if not user:
+            stats['skipped'] += 1
+            continue
+
+        if not user.email_reminders or user.notification_method == 'none':
+            stats['skipped'] += 1
+            continue
+
+        notify_days = user.reminder_days_before or 7
+        notification_date = task.due_date - timedelta(days=notify_days)
+        if today < notification_date:
+            stats['skipped'] += 1
+            continue
+
+        days_until = (task.due_date - today).days
+        time_msg = _time_message(days_until)
+
+        title = f"Task due: {task.title} ({time_msg})"
+        message = (
+            f"Person: {task.person.display_name}\n"
+            f"Task: {task.title}\n"
+            f"Priority: {task.priority}\n"
+            f"Due: {task.due_date.strftime('%B %d, %Y')} ({time_msg})\n"
+        )
+        if task.description:
+            message += f"Details: {task.description}\n"
+
+        try:
+            success, error = NotificationService.send_notification(user, title, message)
+
+            if success:
+                task.notification_sent = True
+                db.session.commit()
+                stats['sent'] += 1
+                logger.info(f"Sent notification for person task #{task.id} to {user.username}")
+            else:
+                stats['failed'] += 1
+                stats['errors'].append(f"Person task #{task.id}: {error}")
+                logger.warning(f"Failed to send notification for person task #{task.id}: {error}")
+        except Exception as e:
+            stats['failed'] += 1
+            stats['errors'].append(f"Person task #{task.id}: {str(e)}")
+            logger.error(f"Error processing person task #{task.id}: {e}")
 
     return stats
 
@@ -134,6 +213,8 @@ def process_due_calendar_alarms():
             f"Event: {event.title}\n"
             f"Starts: {event.start_at.isoformat() if event.start_at else 'unknown'}\n"
         )
+        if event.person:
+            message += f"Person: {event.person.display_name}\n"
         if event.location:
             message += f"Location: {event.location}\n"
 
