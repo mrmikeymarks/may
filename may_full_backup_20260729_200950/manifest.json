@@ -1,0 +1,23 @@
+{
+  "version": "0.23.0",
+  "created_at": "2026-07-29T20:09:50.193827",
+  "username": "admin",
+  "files": [
+    {
+      "filename": "e694739a7d0c45d0aa0d9b5befa946d5_god-bless_-_1_copy.jpeg",
+      "type": "vehicle",
+      "record_id": 1,
+      "file_type": "image",
+      "size": 287169,
+      "sha256": "29a6d558ba6460384f5e38486ba6553b973581a6c2b4321eeea5540188e8ef0f"
+    },
+    {
+      "filename": "doc_a93f4640f614400d90fd9361d7f7ebd7_IMG_5865.jpeg",
+      "type": "document",
+      "record_id": 1,
+      "file_type": "jpeg",
+      "size": 3059619,
+      "sha256": "977fbcfbae40750b9ec56ffe6ce3cf875e28d3b7a1d6b8ede3ae1ad954509f08"
+    }
+  ]
+}

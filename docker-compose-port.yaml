@@ -1,55 +1,53 @@
+# Dev-image deployment: runs the published dev build of this fork
+# (ghcr.io/mrmikeymarks/may) instead of building locally. Equivalent to
+# docker-compose.yml (may + mailpit) minus the optional database profiles.
+#
+# CLI (stack.env supplies the ${VAR} values):
+#   docker compose -f docker-compose-port.yaml --env-file stack.env up -d
+# Portainer: deploy from the repository and define the stack.env variables
+# in the stack's environment variables section.
+#
+# Web UI: http://localhost:5050 - Mailpit inbox: http://localhost:8025
+
 services:
   may:
-    image: ${MAY_IMAGE:-ghcr.io/dannymcc/may}:${MAY_TAG:-latest}
+    image: ${MAY_IMAGE:-ghcr.io/mrmikeymarks/may:dev}
+    pull_policy: always
     container_name: ${MAY_CONTAINER_NAME:-may}
     restart: unless-stopped
     ports:
-      - ${MAY_PORT:-5050}:5050
+      - "${MAY_PORT:-5050}:5050"
     volumes:
-      - may_data:/app/data
+      - may_dev_data:/app/data
     environment:
       - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
       - DATABASE_URL=${DATABASE_URL:-sqlite:////app/data/may.db}
       - UPLOAD_FOLDER=/app/data/uploads
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-your-secure-password}
+      - SMTP_HOST=${SMTP_HOST:-mailpit}
+      - SMTP_PORT=${SMTP_PORT:-1025}
+      - SMTP_SENDER=${SMTP_SENDER:-may@localhost}
+      - SMTP_SENDER_NAME=${SMTP_SENDER_NAME:-May}
+      - SMTP_TLS=${SMTP_TLS:-false}
+      - SMTP_SSL=${SMTP_SSL:-false}
+    depends_on:
+      - mailpit
 
-  postgres:
-    image: postgres:16-alpine
-    profiles: ["postgres"]
+  mailpit:
+    image: axllent/mailpit
+    container_name: may-dev-mailpit
     restart: unless-stopped
+    ports:
+      - "8025:8025"
     environment:
-      - POSTGRES_DB=${POSTGRES_DB:-may}
-      - POSTGRES_USER=${POSTGRES_USER:-may}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-may}
+      - MP_DATABASE=/data/mailpit.db
+      - MP_SMTP_AUTH_ACCEPT_ANY=1
+      - MP_SMTP_AUTH_ALLOW_INSECURE=1
     volumes:
-      - may_postgres_data:/var/lib/postgresql/data
-
-  mysql:
-    image: mysql:8
-    profiles: ["mysql"]
-    restart: unless-stopped
-    environment:
-      - MYSQL_DATABASE=${MYSQL_DATABASE:-may}
-      - MYSQL_USER=${MYSQL_USER:-may}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-may}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-may-root}
-    volumes:
-      - may_mysql_data:/var/lib/mysql
-
-  mariadb:
-    image: mariadb:11
-    profiles: ["mariadb"]
-    restart: unless-stopped
-    environment:
-      - MARIADB_DATABASE=${MARIADB_DATABASE:-may}
-      - MARIADB_USER=${MARIADB_USER:-may}
-      - MARIADB_PASSWORD=${MARIADB_PASSWORD:-may}
-      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-may-root}
-    volumes:
-      - may_mariadb_data:/var/lib/mysql
+      - may_dev_mailpit_data:/data
 
 volumes:
-  may_data:
-  may_postgres_data:
-  may_mysql_data:
-  may_mariadb_data:
+  may_dev_data:
+  may_dev_mailpit_data:

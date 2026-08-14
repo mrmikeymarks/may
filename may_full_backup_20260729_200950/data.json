@@ -1,0 +1,163 @@
+{
+  "export_info": {
+    "exported_at": "2026-07-29T20:09:50.161055",
+    "username": "admin",
+    "app_version": "0.23.0",
+    "backup_type": "full"
+  },
+  "user_preferences": {
+    "language": "en",
+    "distance_unit": "mi",
+    "volume_unit": "us_gal",
+    "consumption_unit": "mpg_us",
+    "currency": "USD"
+  },
+  "vehicles": [
+    {
+      "id": 1,
+      "name": "dd",
+      "vehicle_type": "car",
+      "make": "",
+      "model": "",
+      "year": 2020,
+      "registration": "ABC123",
+      "vin": "ABC123456678",
+      "fuel_type": "petrol",
+      "tank_capacity": null,
+      "battery_capacity": null,
+      "is_active": true,
+      "notes": "",
+      "image_filename": "e694739a7d0c45d0aa0d9b5befa946d5_god-bless_-_1_copy.jpeg",
+      "mot_status": null,
+      "mot_expiry": null,
+      "tax_status": null,
+      "tax_due": null,
+      "created_at": "2026-05-18T11:29:07.976440",
+      "specifications": [],
+      "fuel_logs": [
+        {
+          "id": 2,
+          "date": "2026-07-29",
+          "odometer": 100001.0,
+          "volume": 1.0,
+          "price_per_unit": 60.0,
+          "total_cost": 60.0,
+          "is_full_tank": true,
+          "is_missed": false,
+          "station": "optional-entry-point-00000",
+          "notes": null,
+          "created_at": "2026-07-29T15:34:21.157709",
+          "attachments": []
+        },
+        {
+          "id": 1,
+          "date": "2026-06-29",
+          "odometer": 10000.0,
+          "volume": null,
+          "price_per_unit": null,
+          "total_cost": null,
+          "is_full_tank": true,
+          "is_missed": false,
+          "station": "",
+          "notes": null,
+          "created_at": "2026-06-29T05:13:51.264316",
+          "attachments": []
+        }
+      ],
+      "expenses": [
+        {
+          "id": 1,
+          "date": "2026-05-18",
+          "category": "cleaning",
+          "description": "monthly car was",
+          "cost": 22.0,
+          "odometer": null,
+          "vendor": "",
+          "notes": "",
+          "created_at": "2026-05-18T11:50:21.722483",
+          "attachments": []
+        }
+      ],
+      "reminders": [],
+      "maintenance_schedules": [],
+      "recurring_expenses": [],
+      "documents": [
+        {
+          "id": 1,
+          "title": "2024 insurance policy",
+          "document_type": "insurance",
+          "description": "",
+          "filename": "doc_a93f4640f614400d90fd9361d7f7ebd7_IMG_5865.jpeg",
+          "original_filename": "IMG_5865.jpeg",
+          "file_type": "jpeg",
+          "file_size": 3059619,
+          "issue_date": null,
+          "expiry_date": null,
+          "reference_number": "",
+          "remind_before_expiry": true,
+          "remind_days": 30,
+          "created_at": "2026-05-18T14:15:27.062935"
+        }
+      ],
+      "trips": [],
+      "charging_sessions": [],
+      "parts": [],
+      "attachments": []
+    },
+    {
+      "id": 2,
+      "name": "EZ",
+      "vehicle_type": "car",
+      "make": "Ford",
+      "model": "Fusion",
+      "year": 2013,
+      "registration": "",
+      "vin": "",
+      "fuel_type": "petrol",
+      "tank_capacity": null,
+      "battery_capacity": null,
+      "is_active": true,
+      "notes": "",
+      "image_filename": null,
+      "mot_status": null,
+      "mot_expiry": null,
+      "tax_status": null,
+      "tax_due": null,
+      "created_at": "2026-05-18T14:14:06.985422",
+      "specifications": [],
+      "fuel_logs": [],
+      "expenses": [],
+      "reminders": [],
+      "maintenance_schedules": [],
+      "recurring_expenses": [],
+      "documents": [],
+      "trips": [],
+      "charging_sessions": [],
+      "parts": [],
+      "attachments": []
+    }
+  ],
+  "fuel_stations": [],
+  "fuel_price_history": [],
+  "files_manifest": {
+    "total_files": 2,
+    "files": [
+      {
+        "filename": "e694739a7d0c45d0aa0d9b5befa946d5_god-bless_-_1_copy.jpeg",
+        "type": "vehicle",
+        "record_id": 1,
+        "file_type": "image",
+        "size": 287169,
+        "sha256": "29a6d558ba6460384f5e38486ba6553b973581a6c2b4321eeea5540188e8ef0f"
+      },
+      {
+        "filename": "doc_a93f4640f614400d90fd9361d7f7ebd7_IMG_5865.jpeg",
+        "type": "document",
+        "record_id": 1,
+        "file_type": "jpeg",
+        "size": 3059619,
+        "sha256": "977fbcfbae40750b9ec56ffe6ce3cf875e28d3b7a1d6b8ede3ae1ad954509f08"
+      }
+    ]
+  }
+}
