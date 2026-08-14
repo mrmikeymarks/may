@@ -2,7 +2,7 @@ services:
   may:
     image: ${MAY_IMAGE:-ghcr.io/dannymcc/may}:${MAY_TAG:-latest}
     container_name: ${MAY_CONTAINER_NAME:-may}
-    restart: unless-stopped
+    restart: always
     ports:
       - ${MAY_PORT:-5050}:5050
     volumes:

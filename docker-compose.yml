@@ -4,7 +4,7 @@ services:
     # To build locally instead, comment out 'image' above and uncomment:
     build: .
     container_name: may
-    restart: unless-stopped
+    restart: always
     ports:
       - "5050:5050"
     volumes:

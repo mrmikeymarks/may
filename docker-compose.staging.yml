@@ -2,7 +2,7 @@ services:
   may:
     image: ghcr.io/dannymcc/may:dev
     container_name: may-dev
-    restart: unless-stopped
+    restart: always
     ports:
       - "5051:5050"
     volumes:

@@ -63,9 +63,12 @@ mkdir may && cd may
 # Download docker-compose.yml
 curl -O https://raw.githubusercontent.com/dannymcc/may/main/docker-compose.yml
 
-# Start the container
+# Start the container in the background
 docker compose up -d
 ```
+
+The web service uses Docker's `always` restart policy, so it is restarted
+automatically if the process or host goes down.
 
 Or run directly with Docker:
 
